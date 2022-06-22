@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find ydlidar_ros_driver)/launch/X4.launch"/>
+    <include file="$(find fpv_agv)/launch/actuator.launch"/>
+</launch>
