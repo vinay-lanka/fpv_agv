@@ -33,6 +33,7 @@ conn,addr=s.accept()
 data = b""
 payload_size = struct.calcsize(">L")
 print("payload_size: {}".format(payload_size))
+state = -1
 while True:
     while len(data) < payload_size:
         print("Recv: {}".format(len(data)))
@@ -53,11 +54,40 @@ while True:
 
     #Identifying AprilTag
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    edge_frame = cv2.Canny(gray_frame, 100, 200)
     tags = tag_detector.detect(gray_frame, False,False, None)
+
     
+    
+    # if tags != []:
+    #     if tags[0].tag_id == 0:
+    #         print("Tag ID is 0")
+    #         cv2.imshow("ImageWindow",blank_image)
+    #         cv2.waitKey(1)
+    #     elif tags[0].tag_id == 1:
+    #         print("Tag ID is 1")
+    #         cv2.imshow('ImageWindow',edge_frame)
+    #         cv2.waitKey(1)
+    # else:
+    #     cv2.imshow('ImageWindow',frame)
+    #     cv2.waitKey(1)
+
     if tags != []:
-        cv2.imshow("ImageWindow",blank_image)
+        if tags[0].tag_id == 0:
+            state = 0
+        
+        elif tags[0].tag_id == 1:
+            state = 1
+
+        elif tags[0].tag_id == 2:
+            state = -1
+    
+    if state == -1:
+        cv2.imshow("ImageWindow", frame)
         cv2.waitKey(1)
-    else:
-        cv2.imshow('ImageWindow',frame)
+    elif state == 0:
+        cv2.imshow("ImageWindow", edge_frame)
+        cv2.waitKey(1)
+    elif state == 1:
+        cv2.imshow("ImageWindow", blank_image)
         cv2.waitKey(1)
