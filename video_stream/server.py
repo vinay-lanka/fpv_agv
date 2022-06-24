@@ -17,6 +17,9 @@ tag_detector = Detector(families='tag36h11',
                        decode_sharpening=0.25,
                        debug=0)
 
+#Blank image
+blank_image = np.zeros(shape=[480, 640, 3], dtype=np.uint8)
+
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print('Socket created')
 
@@ -51,8 +54,10 @@ while True:
     #Identifying AprilTag
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     tags = tag_detector.detect(gray_frame, False,False, None)
+    
     if tags != []:
-        print("Deteced")
-        
-    cv2.imshow('ImageWindow',frame)
-    cv2.waitKey(1)
+        cv2.imshow("ImageWindow",blank_image)
+        cv2.waitKey(1)
+    else:
+        cv2.imshow('ImageWindow',frame)
+        cv2.waitKey(1)
