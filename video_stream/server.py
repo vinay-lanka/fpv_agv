@@ -4,10 +4,18 @@ import cv2
 import pickle
 import numpy as np
 import struct ## new
-import zlib
+from pupil_apriltags import Detector
 
-HOST='192.168.1.3'
+HOST='192.168.1.6'
 PORT=9090
+
+tag_detector = Detector(families='tag36h11',
+                       nthreads=1,
+                       quad_decimate=1.0,
+                       quad_sigma=0.0,
+                       refine_edges=1,
+                       decode_sharpening=0.25,
+                       debug=0)
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print('Socket created')
@@ -39,5 +47,12 @@ while True:
 
     frame=pickle.loads(frame_data, fix_imports=True, encoding="bytes")
     frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+
+    #Identifying AprilTag
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    tags = tag_detector.detect(gray_frame, False,False, None)
+    if tags != []:
+        print("Deteced")
+        
     cv2.imshow('ImageWindow',frame)
     cv2.waitKey(1)
